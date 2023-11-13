@@ -1,6 +1,6 @@
 ---
 title: "Data Visualisation"
-author: ""
+author: "Arancha"
 format:
   html:
     embed-resources: true
@@ -46,10 +46,10 @@ library(rnaturalearth)
 7.  Render the document and fix any errors.
 
 ```{r}
-#| eval: false
+#| eval: true
  
-gapminder_2007 <- ___ |> 
-  ___(year == 2007) 
+gapminder_2007 <- gapminder |> 
+  filter(year == 2007) 
 ```
 
 ## Task 3: Summarize data for life expectancy by continent
@@ -75,11 +75,11 @@ gapminder_2007 <- ___ |>
 ```{r}
 #| eval: false
 
-gapminder_summary_2007 <- ___ |> 
-  group_by(___) |> 
+gapminder_summary_2007 <- gapminder_2007 |> 
+  group_by(continent) |> 
   summarise(
     count = n(),
-    lifeExp = median(___)
+    lifeExp = median(lifeExp)
   )
 ```
 
@@ -104,11 +104,12 @@ gapminder_summary_2007 <- ___ |>
 8.  Render the document and fix any errors.
 
 ```{r}
-#| eval: false
+#| eval: true
 
-gapminder_summary_continent_year <- gapminder ___ 
-  group_by(continent, ___) |> 
-  ___(lifeExp = median(lifeExp)) 
+gapminder_summary_continent_year <- gapminder |> 
+  group_by(continent, year) |> 
+  summarise(lifeExp = median(lifeExp)) 
+
 
 ```
 
@@ -141,9 +142,18 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 
 3.  Do not display (ignore) the outliers in the plot. **Note: Use a search engine or an AI tool to find the solution and add the link to the solution you have found.**
 
+    \# Create a box plot without outliers boxplot(x, outline = FALSE, outlier.colour = "NA")
+
 4.  Run the code contained in the code chunk and fix any errors.
 
-5.  What are the data types of the three variables used for aesthetic mappings?
+5.  What are the data types of the three variables used for aesthetic mappings? Continent: distinct group; Life Exp: discrete;
+
+    ```{r}
+    ggplot(data = gapminder_2007,
+           aes(x = continent,
+               y = lifeExp, fill = continent)) +
+      geom_boxplot(outlier.color = NA)
+    ```
 
 ## Task 7: Create a timeseries plot
 
@@ -156,6 +166,15 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 -   continent to color using the `color = continent` argument inside `aes()`
 
 3.  Run the code contained in the code chunk and fix any errors.
+
+    ```{r}
+    ggplot(data = gapminder_summary_continent_year,
+           mapping = aes(x = year,
+                         y = lifeExp,
+                         color = continent)) +
+      geom_line() +
+      geom_point() 
+    ```
 
 ## Task 8: Create a barplot
 
@@ -170,6 +189,16 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 
 3.  Run the code contained in the code chunk and fix any errors.
 
+    ```{r}
+    ggplot(data = gapminder_summary_2007,
+           mapping = aes(x = continent,
+                         y = count,
+                         fill = continent)) +
+      geom_col()
+    ```
+
+I prefer with colors
+
 ### with `geom_bar()`
 
 1.  Add a new code chunk below.
@@ -181,6 +210,15 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 3.  Run the code contained in the code chunk and fix any errors.
 
 4.  The plot is identical to the plot created with `geom_col()`. Why? What does the `geom_bar()` function do? Write your text here:
+
+    **`geom_col`** is a geometric object in the **`ggplot2`** package in R that is used to create vertical bar charts. It is similar to **`geom_bar`**, but **`geom_col`** uses the **`y`** value of the data to determine the height of the bars, while **`geom_bar`** uses the count of the data
+
+    ```{r}
+    ggplot(data = gapminder_2007,
+           mapping = aes(x = continent, 
+                         fill = continent)) +
+      geom_bar()
+    ```
 
 ## Task 9: Create a histogram
 
@@ -204,6 +242,70 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 
 7.  What happens by adding the 'breaks' argument? Play around with the numbers inside of `seq()` to see what changes. Describe here what you observe:
 
+    ```{r}
+    ggplot(data = gapminder_2007,
+           mapping = aes(x = lifeExp, 
+                         fill = continent)) +
+      geom_histogram(col = "grey30", breaks = seq(40, 85, 2.5))
+    ```
+
+The **`breaks`** argument specifies the number of bins to use in the histogram and the sequence of values that define the edges of the bins. The sequence of values for the **`breaks`** argument should be generated using a positive increment.
+
+```{r}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = lifeExp, 
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(10, 90, 5.5))
+
+```
+
+```{r}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = lifeExp, 
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(10, 90, 5.5))
+
+```
+
+```{r}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = lifeExp, 
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(10, 40, 3.5))
+
+```
+
+```{r}
+ggplot(data = gapminder_2007, 
+       mapping = aes(x =lifeExp,
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(20, 60, 4))
+
+```
+
+```{r}
+ggplot(data = gapminder_2007, 
+       mapping = aes(x =lifeExp,
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(20, 60, 2))
+
+```
+
+```{r}
+ggplot(data = gapminder_2007, 
+       mapping = aes(x =lifeExp,
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(20, 90, 2))
+```
+
+The numbers inside the de seq mean:
+
+-   **`from`** is the starting value of the sequence. First number
+
+-   **`to`** is the ending value of the sequence. Second number
+
+-   **`by`** is the increment between the numbers in the sequence. Third number
+
 ## Task 10: Scatterplot and faceting
 
 1.  Add a new code chunk below.
@@ -221,6 +323,12 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 
 6.  Run the code contained in the code chunk and fix any errors.
 
+    ```{r}
+    ggplot(gapminder_2007, mapping = aes(x= gdpPercap, y = lifeExp, size = pop, color = continent)) +
+      geom_point(show.legend = FALSE)+
+      facet_wrap (~continent)
+    ```
+
 ## Task 11: Create a lineplot and use facets
 
 1.  A code chunk with complete code has already been prepared.
@@ -236,7 +344,7 @@ gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-
 6.  Render the document and fix any errors.
 
 ```{r}
-#| eval: false
+#| eval: true
 
 ggplot(data = gapminder,
        mapping = aes(x = year, 
@@ -245,7 +353,7 @@ ggplot(data = gapminder,
                      color = country)) +
   geom_line(lwd = 1, show.legend = FALSE) + 
   facet_wrap(~continent) +
-  # scale_color_manual(values = country_colors) +
+   scale_color_manual(values = country_colors) +
   theme_minimal() 
 
 ```
@@ -263,7 +371,7 @@ The code chunk below contains code for a world map that shows countries by incom
 3.  Render the document and fix any errors.
 
 ```{r}
-#| eval: false
+#| eval: true
 
 world <- ne_countries(scale = "small", returnclass = "sf")
 
@@ -316,3 +424,16 @@ Once you have ensured that the Quarto document renders without errors and you ha
 5.  Click on the green "New issue" button.
 6.  In the "Title" field write: "Completed module 2 assignments".
 7.  In the "Leave a comment" field, tag the course instructors @larnsce @mianzg @sskorik01 and ask some questions, if you like.
+
+```         
+```
+
+```{r}
+# git_config (user.name = "Arancha", user.email = "arantxa.kine@gmail.com")
+
+```
+
+```{r}
+library(usethis)
+use_git_config(user.name = "Arancha", user.email = "arantxa.kine@gmail.com")
+```
